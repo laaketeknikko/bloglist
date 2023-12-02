@@ -55,3 +55,12 @@ describe("Favourite blog", () => {
         expect(result).toEqual(blogTestData[0])
     })
 })
+
+
+describe("Most blogs", () => {
+    
+    test("with multiple blogs", () => {
+        const result = listHelper.mostBlogs(blogTestData)
+        expect(result).toBe("Robert C. Martin")
+    })
+})
