@@ -29,3 +29,29 @@ describe('total likes', () => {
     })
 
 })
+
+
+
+describe("Favourite blog", () => {
+
+    test("when no blogs", () => {
+        const result = listHelper.favouriteBlog([])
+        expect(result.length).toBe(0)
+    })
+
+    test("when one blog", () => {
+        const result = listHelper.favouriteBlog([blogTestData[0]])
+        expect(result).toEqual(blogTestData[0])
+    })
+
+    test("when multiple blogs", () => {
+        const result = listHelper.favouriteBlog(blogTestData)
+        // Blog 2 has most likes
+        expect(result).toEqual(blogTestData[2])
+    })
+
+    test("when multiple same blogs", () => {
+        const result = listHelper.favouriteBlog([blogTestData[0], blogTestData[0]])
+        expect(result).toEqual(blogTestData[0])
+    })
+})
