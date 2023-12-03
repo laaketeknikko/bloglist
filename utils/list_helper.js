@@ -111,8 +111,6 @@ const mostLikes_lodash = (blogs) => {
         
     }, {author: "", likes: 0})
     
-    
-    console.log(maxLikes)
     return maxLikes
 }
 
