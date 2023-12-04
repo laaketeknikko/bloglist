@@ -1,5 +1,6 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../mongoose_models/Blog");
+const logger = require('../utils/logger');
 
 
 
@@ -16,5 +17,24 @@ blogsRouter.post('/api/blogs', async (request, response) => {
     response.status(201).json(result)
 })
 
+
+blogsRouter.delete('/api/blogs/:id', async (request, response) => {
+    const blog = await Blog.findByIdAndDelete(request.params.id)
+    response.json(blog)
+})
+
+
+blogsRouter.put('/api/blogs/:id', async (request, response) => {
+    
+    const result = await Blog.findByIdAndUpdate(
+        request.params.id,
+        {author: request.body.author,
+        title: request.body.title,
+        url: request.body.url,
+        likes: request.body.likes},
+        {runValidators: true})
+
+    response.status(200).json(result)
+})
 
 module.exports = blogsRouter;

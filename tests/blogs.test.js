@@ -8,11 +8,12 @@ const logger = require('../utils/logger');
 const api = supertest(app)
 
 
-
 beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(testData.blogTestData)
 })
+
+describe("GET API tests", () => {
 
 test("The correct number of blogs is returned and the return format is JSON",
 async () => {
@@ -34,7 +35,10 @@ async () => {
     expect(result.body[0].id).toBeDefined()
     expect(result.body[0]._id).toBeFalsy()
 })
+})
 
+
+describe("POST API tests", () => {
 
 test("POST to /api/blogs inserts a blog into the database",
 async () => {
@@ -77,7 +81,7 @@ async () => {
   expect(blogResult.likes).toBe(0)
 })
 
-/*
+
 test("POST to /api/blogs with no title returns status 400",
 async () => {
     const postResult = await api.post("/api/blogs")
@@ -92,8 +96,49 @@ async () => {
     .send(testData.newBlogData_noTitle)
     .expect(400)
 })
-*/
 
+})
+
+
+describe("DELETE API tests", () => {
+
+test("DELETE to /api/blogs/:id deletes a blog from the database",
+async () => {
+    const blog = await Blog.findOne({})
+    
+    const deleteResult = await api.delete(`/api/blogs/${blog.id}`)
+    .expect(200)
+
+    expect(blog.title).toEqual(deleteResult.body.title)
+    
+    expect(await Blog.countDocuments()).toBe(testData.blogTestData.length - 1)
+})
+
+})
+
+
+describe("PUT API tests", () => {
+
+test("PUT to /api/blogs/:id updates a blog",
+async () => {
+    const blog = await Blog.findOne({})
+    blog.title = "PUT to /api/blogs/:id updates a blog"
+    blog.likes = blog.likes + 10
+    blog.url = "PUTtoapi.com"
+    blog.author = "noname author"
+
+    const result = await api.put(`/api/blogs/${blog._id}`)
+    .send(blog.toJSON())
+    .expect(200)
+
+    const updatedBlog = await Blog.findOne({title: blog.title})
+
+    expect(updatedBlog.title).toEqual(blog.title)
+    expect(updatedBlog.likes).toEqual(blog.likes)
+    expect(updatedBlog.url).toEqual(blog.url)
+    expect(updatedBlog.author).toEqual(blog.author)
+})
+})
 
 afterAll(async () => {
     await mongoose.connection.close()
