@@ -61,6 +61,22 @@ async () => {
 })
 
 
+test("POST to /api/blogs with no likes inserts a blog into the database",
+async () => {
+    const postResult = await api.post("/api/blogs")
+  .send(testData.newBlogData_noLikes)
+  .expect(201)
+  .expect('Content-Type', /application\/json/)
+
+  // Expect document to be inserted with 0 likes
+  expect(postResult.body.likes).toBe(0)
+
+  // Expect document to be fetched with 0 likes
+  const blogResult = await Blog.findOne({title: testData.newBlogData_noLikes.title})
+  expect(blogResult.likes).toBe(0)
+})
+
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
