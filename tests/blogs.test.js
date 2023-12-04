@@ -23,7 +23,15 @@ async () => {
     expect(result.body.length).toBe(testData.length)
 })
 
+test("_id field is replaced by id field in blogs posts",
+async () => {
+    const result = await api.get("/api/blogs")
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
 
+    expect(result.body[0].id).toBeDefined()
+    expect(result.body[0]._id).toBeFalsy()
+})
 
 afterAll(async () => {
     await mongoose.connection.close()
