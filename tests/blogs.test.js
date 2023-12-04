@@ -10,7 +10,7 @@ const api = supertest(app)
 
 beforeEach(async () => {
     await Blog.deleteMany({})
-    await Blog.insertMany(testData)
+    await Blog.insertMany(testData.blogTestData)
 })
 
 test("The correct number of blogs is returned and the return format is JSON",
@@ -20,8 +20,9 @@ async () => {
     .expect(200)
     .expect('Content-Type', /application\/json/)
         
-    expect(result.body.length).toBe(testData.length)
+    expect(result.body.length).toBe(testData.blogTestData.length)
 })
+
 
 test("_id field is replaced by id field in blogs posts",
 async () => {
@@ -32,6 +33,33 @@ async () => {
     expect(result.body[0].id).toBeDefined()
     expect(result.body[0]._id).toBeFalsy()
 })
+
+
+test("POST to /api/blogs inserts a blog into the database",
+async () => {
+    const postResult = await api.post("/api/blogs")
+   .send(testData.newBlogData)
+   .expect(201)
+   .expect('Content-Type', /application\/json/)
+
+   // Expect returned data to match sent data
+   expect(postResult.body.title).toBe(testData.newBlogData.title)
+   expect(postResult.body.author).toBe(testData.newBlogData.author)
+   expect(postResult.body.url).toBe(testData.newBlogData.url)
+   expect(postResult.body.likes).toBe(testData.newBlogData.likes)
+
+   // Expect to find such a document in the database
+   const blogResult = await Blog.findOne({title: testData.newBlogData.title})
+   expect(blogResult.title).toBe(testData.newBlogData.title)
+   expect(blogResult.author).toBe(testData.newBlogData.author)
+   expect(blogResult.url).toBe(testData.newBlogData.url)
+   expect(blogResult.likes).toBe(testData.newBlogData.likes)
+
+   // Expect the number of documents in the database to increase by 1
+   const blogCount = await Blog.countDocuments()
+   expect(blogCount).toBe(testData.blogTestData.length + 1)
+})
+
 
 afterAll(async () => {
     await mongoose.connection.close()

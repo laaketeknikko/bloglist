@@ -1,5 +1,5 @@
 const listHelper = require('../utils/list_helper')
-const blogTestData = require('./test_data')
+const {blogTestData} = require('./test_data')
 
 
 
