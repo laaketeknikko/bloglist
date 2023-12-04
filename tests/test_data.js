@@ -66,8 +66,26 @@ const newBlogData_noLikes = {
 }
 
 
+const newBlogData_noTitle = {
+    author: "Yours truly no title",
+    url: "https://notfoundanywhere.com/no_title",
+    likes: 43,
+    __v: 0
+}
+
+
+const newBlogData_noUrl = {
+    author: "Yours truly no url",
+    title: "New testpost no url",
+    likes: 44,
+    __v: 0
+}
+
+
 module.exports = {
     blogTestData,
     newBlogData,
-    newBlogData_noLikes
+    newBlogData_noLikes,
+    newBlogData_noTitle,
+    newBlogData_noUrl
 }

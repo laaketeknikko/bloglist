@@ -7,19 +7,17 @@ const cors = require('cors')
 const blogsRouter = require("./controllers/blogs")
 
 const mongoose = require('mongoose')
-
-
-
 mongoose.set("strictQuery", false)
 const mongoUrl = config.MONGODB_URI
 mongoose.connect(mongoUrl)
-
 
 app.use(cors())
 app.use(express.json())
 
 app.use("", blogsRouter)
 
+const errorHandler = require("./middleware/errorHandler")
+app.use(errorHandler)
 
 
 module.exports = app;

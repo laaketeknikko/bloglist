@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../app')
 const testData = require("./test_data")
-const Blog = require('../mongoose_models/Blog')
+const Blog = require('../mongoose_models/Blog');
+const logger = require('../utils/logger');
 
 const api = supertest(app)
 
@@ -75,6 +76,23 @@ async () => {
   const blogResult = await Blog.findOne({title: testData.newBlogData_noLikes.title})
   expect(blogResult.likes).toBe(0)
 })
+
+/*
+test("POST to /api/blogs with no title returns status 400",
+async () => {
+    const postResult = await api.post("/api/blogs")
+    .send(testData.newBlogData_noTitle)
+    .expect(400)
+})
+
+
+test("POST to /api/blogs with no url returns status 400",
+async () => {
+    const postResult = await api.post("/api/blogs")
+    .send(testData.newBlogData_noTitle)
+    .expect(400)
+})
+*/
 
 
 afterAll(async () => {
