@@ -2,7 +2,17 @@ const blogsRouter = require("express").Router();
 const Blog = require("../mongoose_models/Blog");
 const logger = require('../utils/logger');
 const User = require("../mongoose_models/User");
+const jwt = require("jsonwebtoken")
 
+
+
+const getTokenFrom = request => {
+    const authorization = request.get('Authorization')
+    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+        return authorization.replace('Bearer ', '')
+    }
+    return null
+}
 
 
 blogsRouter.get('/', async (request, response) => {
@@ -14,9 +24,19 @@ blogsRouter.get('/', async (request, response) => {
 // a random user. I have no idea how this would be done and why you would do it.
 // It makes no sense to me.
 blogsRouter.post('/', async (request, response) => {
+
+    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+    if (!decodedToken.id) {
+        return response.status(401).json({error: "Invalid token"})
+    }
+    const user = await User.findById(decodedToken.id)
+    
     const blog = new Blog(request.body)
-    blog.user = (await User.findOne()).id
+    blog.user = user.id
     const result = await blog.save()
+    user.blogs.push(result.id)
+    await user.save()
+
     response.status(201).json(result)
 })
 
