@@ -6,15 +6,6 @@ const jwt = require("jsonwebtoken")
 
 
 
-const getTokenFrom = request => {
-    const authorization = request.get('Authorization')
-    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-        return authorization.replace('Bearer ', '')
-    }
-    return null
-}
-
-
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({}).populate("user")
     response.json(blogs)
@@ -25,7 +16,7 @@ blogsRouter.get('/', async (request, response) => {
 // It makes no sense to me.
 blogsRouter.post('/', async (request, response) => {
 
-    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+    const decodedToken = jwt.verify(request.JWTToken, process.env.SECRET)
     if (!decodedToken.id) {
         return response.status(401).json({error: "Invalid token"})
     }
