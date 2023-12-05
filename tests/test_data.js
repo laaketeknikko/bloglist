@@ -82,10 +82,26 @@ const newBlogData_noUrl = {
 }
 
 
+const newUserData = [
+    {
+        username: "testuser1",
+        password: "secretpassword",
+        name: "Test User 1"
+    },
+    {
+        username: "testuser2",
+        password: "supersecretpassword",
+        name: "Test User 2"
+    }
+]
+    
+
+
 module.exports = {
     blogTestData,
     newBlogData,
     newBlogData_noLikes,
     newBlogData_noTitle,
-    newBlogData_noUrl
+    newBlogData_noUrl,
+    newUserData
 }

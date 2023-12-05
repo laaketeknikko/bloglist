@@ -4,13 +4,13 @@ const logger = require('../utils/logger');
 
 
 
-blogsRouter.get('/api/blogs', async (request, response) => {
+blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({})
     response.json(blogs)
 })
 
 
-blogsRouter.post('/api/blogs', async (request, response) => {
+blogsRouter.post('/', async (request, response) => {
     const blog = new Blog(request.body)
 
     const result = await blog.save()
@@ -18,13 +18,13 @@ blogsRouter.post('/api/blogs', async (request, response) => {
 })
 
 
-blogsRouter.delete('/api/blogs/:id', async (request, response) => {
+blogsRouter.delete('/:id', async (request, response) => {
     const blog = await Blog.findByIdAndDelete(request.params.id)
     response.json(blog)
 })
 
 
-blogsRouter.put('/api/blogs/:id', async (request, response) => {
+blogsRouter.put('/:id', async (request, response) => {
     
     const result = await Blog.findByIdAndUpdate(
         request.params.id,
