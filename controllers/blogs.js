@@ -15,20 +15,21 @@ blogsRouter.get('/', async (request, response) => {
 // a random user. I have no idea how this would be done and why you would do it.
 // It makes no sense to me.
 blogsRouter.post('/', async (request, response) => {
+    logger.info("request.user", request.user)
 
-    const decodedToken = jwt.verify(request.JWTToken, process.env.SECRET)
-    if (!decodedToken.id) {
-        return response.status(401).json({error: "Invalid token"})
+    const user = request.user
+    if (!user) {
+        response.status(401).json({error: "Unauthorized"})
     }
-    const user = await User.findById(decodedToken.id)
-    
-    const blog = new Blog(request.body)
-    blog.user = user.id
-    const result = await blog.save()
-    user.blogs.push(result.id)
-    await user.save()
+    else {
+        const blog = new Blog(request.body)
+        blog.user = user.id
+        const result = await blog.save()
+        await user.blogs.push(result.id)
+        await user.save()
 
-    response.status(201).json(result)
+        response.status(201).json(result)
+    }
 })
 
 /*
@@ -40,7 +41,7 @@ blogsRouter.delete('/:id', async (request, response) => {
 
 blogsRouter.delete("/:id", async (request, response) => {
     const blog = await Blog.findById(request.params.id)
-    const user = await User.findById(request.decodedJWTToken.id)
+    const user = request.user
 
     if (!blog || !user) {
         return response.status(401).json({error: "Unauthorized"})
