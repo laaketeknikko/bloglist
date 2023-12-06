@@ -31,10 +31,31 @@ blogsRouter.post('/', async (request, response) => {
     response.status(201).json(result)
 })
 
-
+/*
 blogsRouter.delete('/:id', async (request, response) => {
     const blog = await Blog.findByIdAndDelete(request.params.id)
     response.json(blog)
+})
+*/
+
+blogsRouter.delete("/:id", async (request, response) => {
+    const blog = await Blog.findById(request.params.id)
+    const user = await User.findById(request.decodedJWTToken.id)
+
+    if (!blog || !user) {
+        return response.status(401).json({error: "Unauthorized"})
+    }
+
+    if (blog.user.toString() === user.id.toString()) {
+        await blog.deleteOne()
+        await user.blogs.pull(request.params.id)
+        await user.save()
+
+        response.status(200).json({message: "Blog deleted"})
+    }
+    else {
+        response.status(401).json({error: "Unauthorized"})
+    }
 })
 
 
